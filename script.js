@@ -1,4 +1,4 @@
-const recipes = [
+let arr = [
   {
     name: "Veggie Delight",
     imageSrc: "https://source.unsplash.com/random?veggies",
@@ -81,7 +81,7 @@ const recipes = [
   },
   {
     name: "Paneer Tikka",
-    imageSrc: "https://source.unsplash.com/random?paneerTikka",
+    imageSrc: "https://source.unsplash.com/random?paneer-tikka",
     time: "40 min",
     type: "veg",
     isLiked: false,
@@ -105,7 +105,7 @@ const recipes = [
   },
   {
     name: "Fish Tacos",
-    imageSrc: "https://source.unsplash.com/random?fishTacos",
+    imageSrc: "https://source.unsplash.com/random?fish-tacos",
     time: "35 min",
     type: "non-veg",
     isLiked: false,
@@ -121,122 +121,154 @@ const recipes = [
   },
 ];
 
-const recipeContainer = document.getElementById("recipeContainer");
-const searchInput = document.getElementById("searchInput");
-const showAllBtn = document.getElementById("showAllBtn");
-const showVegBtn = document.getElementById("showVegBtn");
-const showNonVegBtn = document.getElementById("showNonVegBtn");
-const ratingAboveRadio = document.getElementById("ratingAbove");
-const ratingBelowRadio = document.getElementById("ratingBelow");
+// Add this to your JavaScript file or script tag at the end of your HTML body
 
-// fetch the data and dynamically generate the recipe cards.
-function generateRecipeCard(recipe) {
-  const card = document.createElement("div");
-  card.classList.add("recipe-card");
+function toggleMenu() {
+  var sideNav = document.getElementById("sideNav");
+  var menuBtn = document.getElementById("menuBtn");
+  var closeBtn = document.getElementById("close");
 
-  const image = document.createElement("img");
-  image.src = recipe.imageSrc;
-  card.appendChild(image);
-
-  const name = document.createElement("h3");
-  name.textContent = recipe.name;
-  card.appendChild(name);
-
-  const type = document.createElement("p");
-  type.textContent = `${recipe.type}`;
-  card.appendChild(type);
-
-  const time = document.createElement("p");
-  time.textContent = `${recipe.time}`;
-  card.appendChild(time);
-
-  const rating = document.createElement("p");
-  rating.textContent = `⭐ ${recipe.rating}`;
-  card.appendChild(rating);
-
-  const likeButton = document.createElement("span");
-  likeButton.classList.add("like-button");
-  likeButton.addEventListener("click", () => {
-    recipe.isLiked = !recipe.isLiked;
-    likeButton.textContent = recipe.isLiked ? "❤️" : "🖤"; // Adjusted content
-  });
-
-  // Initial content based on whether the recipe is liked or not
-  likeButton.textContent = recipe.isLiked ? "❤️" : "🖤";
-
-  card.appendChild(likeButton);
-
-  recipeContainer.appendChild(card);
-}
-
-function filterRecipes(searchQuery) {
-  // Clear existing recipes
-  recipeContainer.innerHTML = "";
-
-  // Filter recipes based on the search query
-  const filteredRecipes = recipes.filter((recipe) =>
-    recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Generate cards for filtered recipes
-  filteredRecipes.forEach((recipe) => {
-    generateRecipeCard(recipe);
-  });
-}
-
-// Listen for input in the search bar
-searchInput.addEventListener("input", (event) => {
-  const searchQuery = event.target.value.trim();
-  filterRecipes(searchQuery);
-});
-
-// functionality to toggle recipe types (veg, non-veg, all).
-function toggleRecipeDisplay(type) {
-  // Clear existing recipes
-  recipeContainer.innerHTML = "";
-
-  // Filter recipes based on the selected type
-  let filteredRecipes;
-  if (type === "all") {
-    filteredRecipes = recipes;
+  if (sideNav.style.width === "50%") {
+    sideNav.style.width = "0";
+    menuBtn.innerHTML = "☰ Menu";
   } else {
-    filteredRecipes = recipes.filter((recipe) => recipe.type === type);
+    sideNav.style.width = "50%";
+    closeBtn.innerHTML = "&times; Close";
   }
-
-  // Generate cards for filtered recipes
-  filteredRecipes.forEach((recipe) => {
-    generateRecipeCard(recipe);
-  });
-}
-// Event listeners for toggle buttons
-showAllBtn.addEventListener("click", () => toggleRecipeDisplay("all"));
-showVegBtn.addEventListener("click", () => toggleRecipeDisplay("veg"));
-showNonVegBtn.addEventListener("click", () => toggleRecipeDisplay("non-veg"));
-
-function filterRecipesByRating() {
-  // Clear existing recipes
-  recipeContainer.innerHTML = "";
-
-  let filteredRecipes;
-  if (ratingAboveRadio.checked) {
-    filteredRecipes = recipes.filter((recipe) => recipe.rating > 4.0);
-  } else if (ratingBelowRadio.checked) {
-    filteredRecipes = recipes.filter((recipe) => recipe.rating < 4.0);
-  } else {
-    filteredRecipes = recipes;
-  }
-
-  // Generate cards for filtered recipes
-  filteredRecipes.forEach((recipe) => {
-    generateRecipeCard(recipe);
-  });
 }
 
-// Event listeners for radio buttons
-ratingAboveRadio.addEventListener("change", filterRecipesByRating);
-ratingBelowRadio.addEventListener("change", filterRecipesByRating);
+function addRecipes() {
+  // Get the container element
+  var container = document.getElementById("parent");
 
-// Map over the recipes and generate cards for each recipe
-recipes.forEach((recipe) => {
-  generateRecipeCard(recipe);
-});
+  // Loop through the array and create elements for each recipe
+  arr.forEach(function (recipe, index) {
+    // Create a new div element for the recipe
+    var recipeDiv = document.createElement("div");
+
+    // Add the "card" class to the recipe div
+    recipeDiv.classList.add("card");
+
+    // Set the HTML content for the recipe div
+    recipeDiv.innerHTML = `
+            <div class="card-img">
+                <img id="recipeImage_${index}" height="100%" width="100%" src="${
+      recipe.imageSrc
+    }" alt="${recipe.name}">
+            </div>
+            <div class="type">${recipe.type}</div>
+            <div class="food-name">
+                <h1>${recipe.name}</h1>
+                <div class="star-rate">
+                    <img src="./images/Star.svg" alt="">
+                    <label>${recipe.rating}</label>
+                </div>
+            </div>
+            <div class="time">
+                <div class="time-text">${recipe.time}</div>
+                <div class="icons">
+                    <img height="23px" id="likeImage_${index}" onclick="toggleLike(${index}, ${
+      recipe.isLiked
+    })" src="${
+      recipe.isLiked ? "./images/like.png" : "./images/unlike.png"
+    }" alt="">
+                    <img src="./images/comments.png" alt="">
+                </div>
+            </div>
+        `;
+
+    // Append the recipe div to the container
+    container.appendChild(recipeDiv);
+  });
+
+  // Call the function to filter recipes when the search input changes
+  document.getElementById("search").addEventListener("input", filterRecipes);
+  // Call the function to filter recipes when the rating checkboxes change
+  document.getElementById("above4").addEventListener("change", filterRecipes);
+  document.getElementById("below4").addEventListener("change", filterRecipes);
+}
+// Function to filter recipes based on the search input and ratings
+function filterRecipes() {
+  // Get the search input value
+  var searchTerm = document.getElementById("search").value.toLowerCase();
+
+  // Get the checkboxes for ratings
+  var above4Checkbox = document.getElementById("above4");
+  var below4Checkbox = document.getElementById("below4");
+
+  // Get all recipe cards
+  var recipeCards = document.querySelectorAll(".card");
+
+  // Loop through each recipe card and check if it matches the search term and rating criteria
+  recipeCards.forEach(function (recipeCard) {
+    var recipeName = recipeCard
+      .querySelector(".food-name h1")
+      .textContent.toLowerCase();
+    var recipeRating = parseFloat(
+      recipeCard.querySelector(".star-rate label").textContent
+    );
+
+    // Check if the recipe name contains the search term
+    var nameMatches = recipeName.includes(searchTerm);
+
+    // Check if the rating criteria match
+    var above4Matches =
+      !above4Checkbox.checked || (above4Checkbox.checked && recipeRating >= 4);
+    var below4Matches =
+      !below4Checkbox.checked || (below4Checkbox.checked && recipeRating < 4);
+
+    // If both checkboxes are selected, show the card; otherwise, check individual criteria
+    if (
+      (above4Checkbox.checked && below4Checkbox.checked) ||
+      (nameMatches && above4Matches && below4Matches)
+    ) {
+      recipeCard.style.display = "block";
+    } else {
+      recipeCard.style.display = "none";
+    }
+  });
+}
+
+// Function to filter recipes based on the selected type
+function filterByType(type) {
+  // Get all recipe cards
+  var recipeCards = document.querySelectorAll(".card");
+
+  // Loop through each recipe card and check if it matches the selected type
+  recipeCards.forEach(function (recipeCard) {
+    var recipeType = recipeCard
+      .querySelector(".type")
+      .textContent.toLowerCase();
+
+    // If the selected type is "all" or matches the recipe type, show the card; otherwise, hide it
+    if (type === "all" || type === recipeType) {
+      recipeCard.style.display = "block";
+    } else {
+      recipeCard.style.display = "none";
+    }
+  });
+
+  // Update the checkboxes to show all ratings when a type filter is applied
+  document.getElementById("above4").checked = false;
+  document.getElementById("below4").checked = false;
+}
+
+// Function to toggle the "like" status
+function toggleLike(index) {
+  // Get the "like" image element
+  var likeImage = document.getElementById(`likeImage_${index}`);
+
+  // Toggle the like status (update the array, backend, etc.)
+  arr[index].isLiked = !arr[index].isLiked;
+
+  // Update the image source based on the like status
+  likeImage.src = arr[index].isLiked
+    ? "./images/like.png"
+    : "./images/unlike.png";
+
+  // Show an alert message based on the current like status
+  // alert(arr[index].isLiked ? "Recipe Liked" : "Recipe Unliked");
+}
+
+// Call the function to add recipes when the page loads
+window.onload = addRecipes;
